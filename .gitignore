@@ -1,0 +1,3 @@
+# Project exclude paths
+/resttemplate-order/order-api/target/
+/resttemplate-user/user-api/target/
