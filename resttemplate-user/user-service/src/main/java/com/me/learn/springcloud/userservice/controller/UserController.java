@@ -9,8 +9,15 @@ package com.me.learn.springcloud.userservice.controller;
 
 import com.me.learn.springcloud.entity.User;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.FileAttribute;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -32,7 +39,7 @@ public class UserController {
         USER_RESPOSITORY.put("jed", user1);
 
         User user2 = new User();
-        user2.setUserName("jed");
+        user2.setUserName("thomos");
         USER_RESPOSITORY.put("thomos", user2);
     }
 
@@ -52,5 +59,32 @@ public class UserController {
             }
         });
         return compute;
+    }
+
+    private static final String WORK_DIR =  System.getProperty("user.dir");
+    private static final String FILE_FOLDER  = WORK_DIR +  "\\resttemplate-user\\user-service\\files";
+
+    @PostMapping(value = "upload")
+    public void uploadFile(MultipartFile file) throws IOException {
+        Path path = FileSystems.getDefault().getPath(FILE_FOLDER);
+        if (Files.notExists(path)) {
+            Files.createDirectory(path, null);
+        }
+
+        String targetFullFileName = FILE_FOLDER + "\\" + file.getOriginalFilename();
+        file.getBytes();
+
+        BufferedOutputStream bis = null;
+        try {
+            bis = new BufferedOutputStream(new FileOutputStream(targetFullFileName));
+            bis.write(file.getBytes());
+            bis.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (bis != null) {
+                bis.close();
+            }
+        }
     }
 }
